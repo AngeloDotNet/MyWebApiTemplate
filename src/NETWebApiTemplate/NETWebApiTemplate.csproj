@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Authors>Angelo Pirola</Authors>
+    <Company>Angelo Pirola</Company>
+    <Product>NETWebApiTemplate</Product>
+    <Title>NET Web Minimal API Template</Title>
+    <Description>A .NET Web Minimal API Template for quickly starting new projects.</Description>
+    <PackageId>NETWebApi.Template</PackageId>
+    <PackageType>Template</PackageType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/AngeloDotNet/MyWebApiTemplate</PackageProjectUrl>
+    <PackageTags>dotnet;csharp;template;webapi;minimalapi;</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/AngeloDotNet/MyWebApiTemplate.git</RepositoryUrl>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>src</ContentTargetFolders>
+    <RepositoryBranch>main</RepositoryBranch>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.3" />
+  </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+</Project>
