@@ -27,6 +27,7 @@ public class Program
             app.UseSwaggerUI(options => options.SwaggerEndpoint("/openapi/v1.json", $"{app.Environment.ApplicationName} v1"));
         }
 
+        app.MapGet("/hello", () => "Hello, world!");
         app.UseRouting();
         app.Run();
     }
