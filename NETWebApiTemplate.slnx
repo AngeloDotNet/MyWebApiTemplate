@@ -5,6 +5,7 @@
     <File Path="Directory.Build.props" />
     <File Path="LICENSE" />
     <File Path="README.md" />
+    <File Path="src/.template.config/template.json" />
   </Folder>
   <Project Path="src/NETWebApiTemplate/NETWebApiTemplate.csproj" />
 </Solution>
