@@ -1,5 +1,4 @@
-
-using System.Text.Json.Serialization;
+using AppEngine.Extensions;
 
 namespace Template.WebApi;
 
@@ -10,11 +9,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddHttpContextAccessor();
-        builder.Services.ConfigureHttpJsonOptions(options =>
-        {
-            options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        });
+        builder.Services.AddHttpJsonOptions();
 
         builder.Services.AddOpenApi();
 
@@ -28,6 +23,7 @@ public class Program
         }
 
         app.MapGet("/hello", () => "Hello, world!");
+
         app.UseRouting();
         app.Run();
     }
