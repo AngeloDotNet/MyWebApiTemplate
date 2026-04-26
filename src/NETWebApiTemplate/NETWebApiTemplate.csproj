@@ -30,12 +30,14 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.7" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Expressions" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
-    <PackageReference Include="TinyAppEngine" Version="1.0.15" />
-    <PackageReference Include="TinyAppEngine.Tools" Version="1.0.16" />
+    <PackageReference Include="TinyAppEngine" Version="1.0.25" />
+    <PackageReference Include="TinyAppEngine.Tools" Version="1.0.34" />
   </ItemGroup>
 
     <ItemGroup>
