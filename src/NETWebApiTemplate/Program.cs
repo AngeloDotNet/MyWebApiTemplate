@@ -1,19 +1,4 @@
-using AppEngine.Routing;
-using AppEngine.Tools;
-using AppEngine.Tools.TimeZoneService;
-using AppEngine.Tools.TimeZoneService.Interfaces;
-using EntityFramework.Exceptions.SqlServer;
-using FluentValidation;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Net.Http.Headers;
-using NETWebApiTemplate.BusinessLayer.Settings;
-using NETWebApiTemplate.DataAccessLayer;
-using NETWebApiTemplate.Logging;
-using NETWebApiTemplate.Swagger;
-using Serilog;
-using Serilog.Core;
+using ErrorResponseFormat = AppEngine.Validation.ErrorResponseFormat;
 
 namespace Template.WebApi;
 
@@ -61,21 +46,21 @@ public class Program
                 options.EnableSensitiveDataLogging();
             }
 
-            // Ignore the warning about pending model changes, as we will handle migrations manually.
             options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
-
             options.UseExceptionProcessor();
+
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
-
-        builder.Services.AddHttpJsonOptions();
-        builder.Services.AddSimpleAuthentication(builder.Configuration);
 
         var appSettings = builder.Services.ConfigureAndGet<AppSettings>(builder.Configuration, nameof(AppSettings)) ?? new();
         var swaggerSettings = builder.Services.ConfigureAndGet<SwaggerSettings>(builder.Configuration, nameof(SwaggerSettings)) ?? new();
 
-        // Configure request localization with the supported cultures from app settings.
+        builder.Services.AddHttpJsonOptions();
+        //builder.Services.AddSimpleAuthentication(builder.Configuration, appSettings.JWTSectionName);
+
+        // Add supported cultures for request localization. The cultures should be defined in the appsettings.json file under the SupportedCultures property.
         builder.Services.AddRequestLocalization(appSettings.SupportedCultures.Distinct().ToArray());
+        builder.Services.AddResponseCompression();
 
         // If you want to support all specific cultures, you can use the following code instead of the above line:
         //builder.Services.AddRequestLocalization(options =>
@@ -89,7 +74,46 @@ public class Program
         // Disable FluentValidation's built-in localization to use our custom error messages.
         // Rif: https://docs.fluentvalidation.net/en/latest/localization.html#disabling-localization
         ValidatorOptions.Global.LanguageManager.Enabled = false;
-        //builder.Services.AddValidatorsFromAssemblyContaining<MyCustomValidator>();
+
+        builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+        builder.Services.ConfigureValidation(options =>
+        {
+            options.ErrorResponseFormat = ErrorResponseFormat.List;
+
+            // The default message is "One or more validation errors occurred", if you want to show the number of errors, uncomment the line below.
+            //options.ValidationErrorTitleMessageFactory = (context, errors) => $"There was {errors.Values.Sum(v => v.Length)} validation error(s) occurred";
+        });
+
+        builder.Services.AddMemoryCache();
+        // If you want to use in-memory caching, uncomment the following line.
+        // AddDistributedMemoryCache is used in a test endpoint, if it is removed and there are
+        // no endpoints that require the use of distributed cache you can comment out the line below
+        builder.Services.AddDistributedMemoryCache();
+
+        // If you want to use Redis for caching, uncomment the following lines.
+        //builder.Services.AddStackExchangeRedisCache(options =>
+        //{
+        //    // Basic Redis configuration using a connection string. Replace with your Redis server endpoint and port.
+        //    options.Configuration = "localhost:6379";
+
+        //    // Prefix for all cache keys to avoid conflicts with other applications using the same Redis server.
+        //    options.InstanceName = "NETWebApiTemplate:";
+
+        //    // For a more advanced Redis configuration (comment out the configuration above, as it is overridden),
+        //    // you can use ConfigurationOptions like this:
+        //    //var redisSettings = builder.Services.ConfigureAndGet<RediSettings>(builder.Configuration, nameof(RediSettings)) ?? new();
+
+        //    //options.InstanceName = redisSettings.InstanceName;
+        //    //options.ConfigurationOptions = new ConfigurationOptions
+        //    //{
+        //    //    EndPoints = { redisSettings.EndPoints },
+        //    //    Password = redisSettings.Password,
+        //    //    ClientName = redisSettings.ClientName,
+        //    //    KeepAlive = redisSettings.KeepAlive,
+        //    //    Ssl = redisSettings.SslforAzure,
+        //    //    AbortOnConnectFail = redisSettings.AbortOnConnectFail
+        //    //};
+        //});
 
         builder.Services.AddOpenApiOperationParameters(options =>
         {
@@ -100,19 +124,50 @@ public class Program
                 Required = false,
                 Schema = OpenApiSchemaHelper.CreateStringSchema()
             });
+
+            //    options.Parameters.Add(new()
+            //    {
+            //        Name = "x-tenant",
+            //        In = ParameterLocation.Header,
+            //        Required = true,
+            //        Schema = OpenApiSchemaHelper.CreateStringSchema()
+            //    });
+
+            //    options.Parameters.Add(new()
+            //    {
+            //        Name = "x-environment",
+            //        In = ParameterLocation.Header,
+            //        Schema = OpenApiSchemaHelper.CreateSchema<Environment>(Environment.Production)
+            //    });
         });
 
         if (swaggerSettings.IsEnabled)
         {
             builder.Services.AddOpenApi(options =>
             {
+                // Remove Servers list in OpenAPI.
                 options.RemoveServerList();
-                options.AddSimpleAuthentication(builder.Configuration);
 
+                // Enable OpenAPI integration for simple authentication.
+                //options.AddSimpleAuthentication(builder.Configuration, appSettings.JWTSectionName); 
+
+                // Add Accept-Language header to all endpoints.
                 options.AddAcceptLanguageHeader();
+
+                // Add a default (error) response to all endpoints.
                 options.AddDefaultProblemDetailsResponse();
 
+                // Enable OpenAPI integration for custom parameters.
                 options.AddOperationParameters();
+
+                // Respect the ignored JsonNumberHandling attribute.
+                //options.WriteNumberAsString(); 
+
+                // Describe all query string parameters in Camel Case.
+                //options.DescribeAllParametersInCamelCase();
+
+                // Add time examples for TimeSpan and TimeOnly fields.
+                //options.AddTimeExamples(); 
             });
         }
 
@@ -123,8 +178,7 @@ public class Program
         {
             options.AddDefaultPolicy(builder =>
             {
-                builder.AllowAnyHeader()
-                    .AllowAnyMethod().SetIsOriginAllowed(_ => true)
+                builder.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed(_ => true)
                     .AllowCredentials().WithExposedHeaders(HeaderNames.ContentDisposition);
             });
         });
@@ -137,7 +191,6 @@ public class Program
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
             KnownProxies = { }
         });
-
         app.UseHttpsRedirection();
 
         app.UseExceptionHandler();
@@ -145,18 +198,21 @@ public class Program
 
         if (swaggerSettings.IsEnabled)
         {
-            app.UseMiddleware<SwaggerBasicAuthenticationMiddleware>();
+            if (swaggerSettings.RequireAuthentication)
+            {
+                app.UseMiddleware<SwaggerBasicAuthenticationMiddleware>();
+            }
 
-            app.MapOpenApi();
             //app.MapOpenApi().AllowAnonymous(); // Allow anonymous access to the OpenAPI document for tools like Swagger UI.
+            app.MapOpenApi();
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/openapi/v1.json", $"{app.Environment.ApplicationName} v1");
             });
         }
 
-        app.UseDefaultFiles();
-        app.UseStaticFiles();
+        //app.UseDefaultFiles(); // Enable serving default files like index.html from wwwroot folder
+        //app.UseStaticFiles(); // Enable serving static files from wwwroot folder
 
         app.UseRouting();
         app.UseCors();
@@ -170,9 +226,11 @@ public class Program
         });
         //app.UseAuthorization();
 
-        app.MapGet("/hello", () => "Hello, world!");
+        app.UseResponseCompression();
+        app.UseResponseCaching();
 
-        app.MapEndpoints();
+        app.MapEndpoints(); // Automatically map endpoints from all controllers in the assembly.
+        //app.MapEndpointsFromAssemblyContaining<Program>(); // Automatically map endpoints from all controllers in the assembly.
         app.Run();
 
         //static async Task ConfigureDatabaseAsync(IServiceProvider serviceProvider)
