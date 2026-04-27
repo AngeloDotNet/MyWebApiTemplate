@@ -36,8 +36,8 @@
     <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
-    <PackageReference Include="TinyAppEngine" Version="1.0.25" />
-    <PackageReference Include="TinyAppEngine.Tools" Version="1.0.34" />
+    <PackageReference Include="TinyAppEngine" Version="1.0.28" />
+    <PackageReference Include="TinyAppEngine.Tools" Version="1.0.41" />
   </ItemGroup>
 
     <ItemGroup>
