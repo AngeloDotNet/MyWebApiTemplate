@@ -1,0 +1,38 @@
+name: publish
+
+on:
+  push:
+    branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
+
+env:
+  NET_VERSION: '10.x'
+  PROJECT_NAME: src/NETWebApiTemplate
+  PROJECT_FILE: NETWebApiTemplate.csproj
+
+jobs:
+  build:
+    name: Publish on NuGet
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      # uses: actions/checkout@v4.2.2
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
+
+    - name: Setup .NET Core SDK ${{ env.NET_VERSION }}
+      # uses: actions/setup-dotnet@v4.3.0
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ env.NET_VERSION }}
+        dotnet-quality: 'ga'
+    
+    - name: Package
+      run: dotnet pack -c Release -o . '${{ env.PROJECT_NAME }}/${{ env.PROJECT_FILE }}'
+    
+    - name: Publish on NuGet
+      run: dotnet nuget push *.nupkg -k ${{ secrets.BAGET_API_KEY }} -s http://nuget.aepserver.it/v3/index.json --allow-insecure-connections --no-symbols --skip-duplicate
+      # run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --no-symbols --skip-duplicate
