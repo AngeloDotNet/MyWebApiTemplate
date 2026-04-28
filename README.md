@@ -1,10 +1,12 @@
-# NETWebApi.Template
+# MinimalApi.Template
 
-This is a template for creating a .NET web API project. It includes the necessary files and structure to get started quickly with building a minimal web API using the latest .NET SDK.
+This is a template for creating a .NET web API project.
+It includes the necessary files and structure to get started quickly with building a minimal web API using the latest .NET SDK.
 
 ## 🏷️ Introduction
 
-**NETWebApi.Template** is a project template designed to help developers quickly set up a .NET web minimal API project. It provides a basic structure and configuration to get you started with building your API without having to worry about the initial setup.
+**MinimalApi.Template** is a project template designed to help developers quickly set up a .NET web minimal API project.
+It provides a basic structure and configuration to get you started with building your API without having to worry about the initial setup.
 
 ## 🛠️ Installation
 
@@ -17,21 +19,21 @@ This is a template for creating a .NET web API project. It includes the necessar
 The package is available on [BaGet](http://nuget.aepserver.it/packages/NETWebApi.Template), to install it use the following command in your terminal:
 
 ```shell
-dotnet new --install NETWebApi.Template
+dotnet new --install MinimalApi.Template
 ```
 
 > [!TIP]
 > If new versions of the template appear, you can update it using the following command in the terminal:
 
 ```shell
-dotnet new --update NETWebApi.Template
+dotnet new --update MinimalApi.Template
 ```
 
 > [!TIP]
 > You can delete it using the following command in the terminal:
 
 ```shell
-dotnet new --uninstall NETWebApi.Template
+dotnet new --uninstall MinimalApi.Template
 ```
 
 ## 🚀 Getting Started
@@ -39,7 +41,7 @@ dotnet new --uninstall NETWebApi.Template
 To create a new Web API project using this template, run the following command in your terminal:
 
 ```shell
-dotnet new netwebapi -n <YourProjectName>
+dotnet new minimalapi -n <YourProjectName>
 ```
 
 <!--
