@@ -8,8 +8,8 @@ on:
 
 env:
   NET_VERSION: '10.x'
-  PROJECT_NAME: src/NETWebApiTemplate
-  PROJECT_FILE: NETWebApiTemplate.csproj
+  PROJECT_NAME: src/MinimalApi.Template
+  PROJECT_FILE: MinimalApi.Template.Api.csproj
 
 jobs:
   build:
@@ -18,13 +18,11 @@ jobs:
 
     steps:
     - name: Checkout
-      # uses: actions/checkout@v4.2.2
       uses: actions/checkout@v6
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
 
     - name: Setup .NET Core SDK ${{ env.NET_VERSION }}
-      # uses: actions/setup-dotnet@v4.3.0
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ env.NET_VERSION }}
@@ -35,4 +33,3 @@ jobs:
     
     - name: Publish on NuGet
       run: dotnet nuget push *.nupkg -k ${{ secrets.BAGET_API_KEY }} -s http://nuget.aepserver.it/v3/index.json --allow-insecure-connections --no-symbols --skip-duplicate
-      # run: dotnet nuget push *.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --no-symbols --skip-duplicate
