@@ -417,4 +417,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-/src/MinimalApi.Template/appsettings.local.json
+/src/NETWebApiTemplate/appsettings.local.json
