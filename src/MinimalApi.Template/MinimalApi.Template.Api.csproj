@@ -16,6 +16,7 @@
     <PackageTags>dotnet;csharp;template;webapi;minimalapi;</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AngeloDotNet/MinimalApi.Template.git</RepositoryUrl>
+    <IsPackable>true</IsPackable>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <ContentTargetFolders>src</ContentTargetFolders>
