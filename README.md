@@ -19,9 +19,17 @@ It provides a basic structure and configuration to get you started with building
 The package is available on [BaGet](http://nuget.aepserver.it/packages/NETWebApi.Template), to install it use the following command in your terminal:
 
 ```shell
-dotnet new --install MinimalApi.Template
+dotnet new install MinimalApi.Template
 ```
 
+> [!WARNING]
+> Since the template is not published on Nuget but on Baget (nuget custom) it is necessary to add a new dedicated nuget source using the following command:
+
+```shell
+dotnet nuget add source http://nuget.aepserver.it/v3/index.json --allow-insecure-connections --name Baget
+```
+
+<!--
 > [!TIP]
 > If new versions of the template appear, you can update it using the following command in the terminal:
 
@@ -35,6 +43,7 @@ dotnet new --update MinimalApi.Template
 ```shell
 dotnet new --uninstall MinimalApi.Template
 ```
+-->
 
 ## 🚀 Getting Started
 

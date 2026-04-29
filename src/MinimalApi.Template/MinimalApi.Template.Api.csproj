@@ -17,9 +17,12 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/AngeloDotNet/MinimalApi.Template.git</RepositoryUrl>
     <IsPackable>true</IsPackable>
+    <!--<IncludeContentInPack>true</IncludeContentInPack>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <ContentTargetFolders>src</ContentTargetFolders>-->
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <ContentTargetFolders>src</ContentTargetFolders>
+    <ContentTargetFolders>content</ContentTargetFolders>
     <RepositoryBranch>main</RepositoryBranch>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
