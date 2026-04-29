@@ -36,14 +36,15 @@ dotnet nuget add source http://nuget.aepserver.it/v3/index.json --allow-insecure
 ```shell
 dotnet new --update MinimalApi.Template
 ```
+-->
 
 > [!TIP]
 > You can delete it using the following command in the terminal:
 
 ```shell
-dotnet new --uninstall MinimalApi.Template
+dotnet new uninstall MinimalApi.Template
 ```
--->
+
 
 ## 🚀 Getting Started
 

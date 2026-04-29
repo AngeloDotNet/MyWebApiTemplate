@@ -1,17 +1,17 @@
 {
     "$schema": "http://json.schemastore.org/template",
     "author": "Angelo Pirola",
-    "classifications": [ "Web", "API", "ASP.NET", "Minimal API" ],
-    "identity": "MinimalApi.Template",
-    "name": "ASP.NET Core Web Minimal API custom",
-    "description": "Un template per creare un progetto ASP.NET Core Web Minimal API con un approccio minimalista, personalizzato per le mie esigenze.",
-    "shortName": "minimalapi",
-    "sourceName": "MinimalApiTemplate",
-    "preferNameDirectory": true,
-    "tags": {
-        "language": "C#",
-        "type": "project"
-    },
+	"classifications": [ "Web", "API", "ASP.NET", "Minimal API" ],
+	"identity": "MinimalApi.Template",
+	"name": "ASP.NET Core Web Minimal API custom",
+	"description": "Un template per creare un progetto ASP.NET Core Web Minimal API con un approccio minimalista, personalizzato per le mie esigenze.",
+	"shortName": "minimalapi",
+	"sourceName": "MinimalApi.Template",
+	"preferNameDirectory": true,
+	"tags": {
+		"language": "C#",
+		"type": "project"
+	},
     "sources": [
         {
             "source": "./",
@@ -26,19 +26,25 @@
                 ".vs/**"
             ],
             "modifiers": [
-                {
-                    "condition": "framework == 'net10.0'",
-                    "include": [ "**/net10.0/**" ]
-                },
-				{
-					"condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
-					"exclude": [
-					"*.slnx"
-					]
-				},
+                //{
+                //    "condition": "framework == 'net10.0'",
+                //    "include": [ "**/net10.0/**" ]
+                //},
+				//{
+				//	"condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
+				//	"exclude": [
+				//	"*.slnx"
+				//	]
+				//},
                 {
                     "rename": {
                         "_gitignore": ".gitignore"
+						//"_gitignore": ".gitignore",
+						//"MinimalApi.Template.slnx": "MinimalApiTemplate.slnx",
+						//"MinimalApi.Template.Api.csproj": "MinimalApiTemplate.Api.csproj",
+						//"MinimalApi.Template.BusinessLayer.csproj": "MinimalApiTemplate.BusinessLayer.csproj",
+						//"MinimalApi.Template.DataAccessLayer.csproj": "MinimalApiTemplate.DataAccessLayer.csproj",
+						//"MinimalApi.Template": "MinimalApiTemplate"
                     }
                 }
             ]
