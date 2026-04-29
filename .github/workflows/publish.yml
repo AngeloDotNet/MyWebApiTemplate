@@ -3,13 +3,10 @@ name: publish
 on:
   push:
     branches: [ main ]
-  # pull_request:
-  #   branches: [ main ]
 
 env:
   NET_VERSION: '10.x'
-  PROJECT_NAME: src/MinimalApi.Template
-  PROJECT_FILE: MinimalApi.Template.Api.csproj
+  PROJECT_FILENAME: MinimalApi.Template.csproj
 
 jobs:
   build:
@@ -22,14 +19,14 @@ jobs:
       with:
         fetch-depth: 0 # avoid shallow clone so nbgv can do its work.
 
-    - name: Setup .NET Core SDK ${{ env.NET_VERSION }}
+    - name: Setup .NET SDK ${{ env.NET_VERSION }}
       uses: actions/setup-dotnet@v5
       with:
         dotnet-version: ${{ env.NET_VERSION }}
         dotnet-quality: 'ga'
     
     - name: Package
-      run: dotnet pack -c Release -o . '${{ env.PROJECT_NAME }}/${{ env.PROJECT_FILE }}'
+      run: dotnet pack -c Release -o . ./${{ env.PROJECT_FILENAME }}
     
     - name: Publish on NuGet
-      run: dotnet nuget push *.nupkg -k ${{ secrets.BAGET_API_KEY }} -s http://nuget.aepserver.it/v3/index.json --allow-insecure-connections --no-symbols --skip-duplicate
+      run: dotnet nuget push *.nupkg -k ${{ secrets.BAGET_API_KEY }} -s ${{ secrets.BAGET_HOST }} --allow-insecure-connections
