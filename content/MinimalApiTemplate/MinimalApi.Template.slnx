@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="MinimalApi.Template.BusinessLayer/MinimalApi.Template.BusinessLayer.csproj" Id="80b8e569-30bb-4944-aeaa-055097406b46" />
+  <Project Path="MinimalApi.Template.DataAccessLayer/MinimalApi.Template.DataAccessLayer.csproj" Id="62b41be0-3c66-4a46-9977-cce2205ca340" />
+  <Project Path="MinimalApi.Template/MinimalApi.Template.Api.csproj" />
+</Solution>

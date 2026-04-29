@@ -16,7 +16,7 @@ It provides a basic structure and configuration to get you started with building
 
 ### Setup
 
-The package is available on [BaGet](http://nuget.aepserver.it/packages/NETWebApi.Template), to install it use the following command in your terminal:
+The package is available on [BaGet](http://nuget.aepserver.it/packages/MinimalApi.Template), to install it use the following command in your terminal:
 
 ```shell
 dotnet new install MinimalApi.Template
