@@ -23,7 +23,14 @@ dotnet new install MinimalApi.Template
 ```
 
 > [!WARNING]
-> Since the template is not published on Nuget but on Baget (nuget custom) it is necessary to add a new dedicated nuget source using the following command:
+> If you need to force the template installation, you can use the following command:
+
+```shell
+dotnet new install MinimalApi.Template --force
+```
+
+> [!IMPORTANT]
+> Since the template is published to Baget (and not to NuGet), you need to add a new dedicated NuGet source using the following command:
 
 ```shell
 dotnet nuget add source http://nuget.aepserver.it/v3/index.json --allow-insecure-connections --name Baget
@@ -38,13 +45,11 @@ dotnet new --update MinimalApi.Template
 ```
 -->
 
-> [!TIP]
-> You can delete it using the following command in the terminal:
+You can delete it using the following command in the terminal:
 
 ```shell
 dotnet new uninstall MinimalApi.Template
 ```
-
 
 ## 🚀 Getting Started
 
