@@ -23,7 +23,14 @@ dotnet new install MinimalApi.Template
 ```
 
 > [!WARNING]
+> If you see the message "Could not install MinimalApi.Template. The package does not exist."
+<!--
 > If you need to force the template installation, you can use the following command:
+-->
+
+<img width="1189" height="338" alt="image" src="https://github.com/user-attachments/assets/e1810ba8-6e10-4c64-be62-56761d5521c2" />
+
+<br />You will need to run the command with the --force option to install the template correctly, as shown in the line below.
 
 ```shell
 dotnet new install MinimalApi.Template --force
@@ -36,20 +43,14 @@ dotnet new install MinimalApi.Template --force
 dotnet nuget add source http://nuget.aepserver.it/v3/index.json --allow-insecure-connections --name Baget
 ```
 
-<!--
-> [!TIP]
-> If new versions of the template appear, you can update it using the following command in the terminal:
-
-```shell
-dotnet new --update MinimalApi.Template
-```
--->
-
-You can delete it using the following command in the terminal:
+To delete the template, it using the following command in the terminal:
 
 ```shell
 dotnet new uninstall MinimalApi.Template
 ```
+
+> [!TIP]
+> To update the template, you will need to uninstall the template and then reinstall it using the terminal commands above.
 
 ## 🚀 Getting Started
 
