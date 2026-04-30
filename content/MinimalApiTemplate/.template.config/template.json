@@ -26,25 +26,9 @@
                 ".vs/**"
             ],
             "modifiers": [
-                //{
-                //    "condition": "framework == 'net10.0'",
-                //    "include": [ "**/net10.0/**" ]
-                //},
-				//{
-				//	"condition": "(HostIdentifier != \"dotnetcli\" && HostIdentifier != \"dotnetcli-preview\")",
-				//	"exclude": [
-				//	"*.slnx"
-				//	]
-				//},
                 {
                     "rename": {
                         "_gitignore": ".gitignore"
-						//"_gitignore": ".gitignore",
-						//"MinimalApi.Template.slnx": "MinimalApiTemplate.slnx",
-						//"MinimalApi.Template.Api.csproj": "MinimalApiTemplate.Api.csproj",
-						//"MinimalApi.Template.BusinessLayer.csproj": "MinimalApiTemplate.BusinessLayer.csproj",
-						//"MinimalApi.Template.DataAccessLayer.csproj": "MinimalApiTemplate.DataAccessLayer.csproj",
-						//"MinimalApi.Template": "MinimalApiTemplate"
                     }
                 }
             ]
@@ -53,57 +37,11 @@
     "symbols": {
         "framework": {
             "type": "parameter",
-            //"datatype": "choice",
             "choices": [
                 { "choice": "net10.0" }
             ],
             "defaultValue": "net10.0",
             "replaces": "TargetFrameworkToken"
         }
-        //"database": {
-        //    "type": "parameter",
-        //    "datatype": "choice",
-        //    "choices": [
-        //        { "choice": "None" },
-        //        { "choice": "Sqlite" },
-        //        { "choice": "SqlServer" },
-        //        { "choice": "Postgres" },
-        //        { "choice": "MySql" }
-        //        { "choice": "InMemory" }
-        //    ],
-        //    "defaultValue": "None"
-        //},
-        //"DatabaseUsingStatements": {
-        //    "type": "computed",
-        //    "value": "database == 'None' ? '' : (database == 'MySql' ? 'using Microsoft.EntityFrameworkCore;\\nusing Pomelo.EntityFrameworkCore.MySql.Infrastructure;' : (database == 'Postgres' ? 'using Microsoft.EntityFrameworkCore;\\nusing Npgsql.EntityFrameworkCore.PostgreSQL;' : 'using Microsoft.EntityFrameworkCore;'))",
-        //    "replaces": "DatabaseUsingStatements"
-        //},
-        //"DatabaseRegistration": {
-        //    "type": "computed",
-        //    "value": "database == 'Sqlite' ? 'builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString(\"DefaultConnection\")));' : (database == 'SqlServer' ? 'builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString(\"DefaultConnection\")));' : (database == 'Postgres' ? 'builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString(\"DefaultConnection\")));' : (database == 'MySql' ? 'builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(builder.Configuration.GetConnectionString(\"DefaultConnection\"), ServerVersion.AutoDetect(builder.Configuration.GetConnectionString(\"DefaultConnection\"))));' : (database == 'InMemory' ? 'builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(\"InMemoryDb\"));' : ''))))",
-        //    "replaces": "DatabaseRegistration"
-        //},
-        //"DefaultConnectionString": {
-        //    "type": "computed",
-        //    "value": "database == 'Sqlite' ? 'Data Source=app.db' : (database == 'SqlServer' ? 'Server=(localdb)\\\\mssqllocaldb;Database=MyAppDb;Trusted_Connection=True;' : (database == 'Postgres' ? 'Host=localhost;Database=myapp;Username=postgres;Password=postgres' : (database == 'MySql' ? 'Server=localhost;Database=myapp;User=root;Password=pass;' : '')))",
-        //    "replaces": "DefaultConnectionString"
-        //}
     }
-	//},
-    //"postActions": [
-    //    {
-    //        "actionId": "5c6ecfef-ee3a-4f7f-b6a8-1e4e7e7b1c2b",
-    //        "args": {
-    //            "executable": "dotnet",
-    //            "args": "restore"
-    //        },
-    //        "continueOnError": true,
-    //        "description": "dotnet restore",
-    //        "manualInstructions": [
-    //            {
-    //                "text": "Run 'dotnet restore' to restore project dependencies."
-    //            }
-    //        ]
-    //    }
-    //]
 }
