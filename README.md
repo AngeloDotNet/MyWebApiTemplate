@@ -26,11 +26,12 @@ dotnet new install MinimalApi.Template
 > If you see the message "Could not install MinimalApi.Template. The package does not exist."
 <!--
 > If you need to force the template installation, you can use the following command:
--->
 
 <img width="1189" height="338" alt="image" src="https://github.com/user-attachments/assets/e1810ba8-6e10-4c64-be62-56761d5521c2" />
+<br />
+-->
 
-<br />You will need to run the command with the --force option to install the template correctly, as shown in the line below.
+You will need to run the command with the --force option to install the template correctly, as shown in the line below.
 
 ```shell
 dotnet new install MinimalApi.Template --force
@@ -68,6 +69,7 @@ dotnet new minimalapi -n <YourProjectName>
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+<!-->
 ## ⭐ Give a Star
 
 Don't forget that if you find this project helpful, please give it a ⭐ on GitHub to show your support and help others discover it.
@@ -80,3 +82,4 @@ Contributions are always welcome. Feel free to report issues and submit pull req
 2. Create a feature branch (starting from the develop branch)
 3. Make your changes
 4. Submit a pull requests (targeting develop)
+-->
