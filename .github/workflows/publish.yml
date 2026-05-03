@@ -29,4 +29,4 @@ jobs:
       run: dotnet pack -c Release -o . ./${{ env.PROJECT_FILENAME }}
     
     - name: Publish on NuGet
-      run: dotnet nuget push *.nupkg -k ${{ secrets.BAGET_API_KEY }} -s ${{ secrets.BAGET_HOST }} --allow-insecure-connections
+      run: dotnet nuget push *.nupkg -k ${{ secrets.BAGET_API_KEY }} -s ${{ secrets.BAGET_HOST }} --allow-insecure-connections --skip-duplicate
