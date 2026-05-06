@@ -17,6 +17,8 @@ public class Program
 		var swaggerSettings = builder.Services.ConfigureAndGet<SwaggerSettings>(builder.Configuration, nameof(SwaggerSettings)) ?? new();
 
 		builder.Services.AddHttpContextAccessor();
+		builder.Services.AddScoped<TestEndpointContext<TestEndpoints>>();
+
 		builder.Services.AddSingleton<ILogEventEnricher, HttpContextEnricher>();
 
 		builder.Services.AddSingleton(TimeProvider.System);
@@ -28,6 +30,9 @@ public class Program
 			var connectionString = builder.Configuration.GetConnectionString("SqlConnection")!;
 			options.UseSqlServer(connectionString, opt =>
 			{
+				opt.CommandTimeout(60); // Set the command timeout to 60 seconds.
+				opt.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+
 				opt.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName);
 				opt.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
 
@@ -40,8 +45,6 @@ public class Program
 				opt.UseCompatibilityLevel(170); // SQL Server 2025
 			});
 
-			options.LogTo(Console.WriteLine, LogLevel.Information);
-
 			// Enable detailed errors and sensitive data logging in development environment for better debugging.
 			if (builder.Environment.IsDevelopment())
 			{
@@ -49,9 +52,18 @@ public class Program
 				options.EnableSensitiveDataLogging();
 			}
 
+			options.LogTo(Console.WriteLine, LogLevel.Information);
 			options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
-			options.UseExceptionProcessor();
 
+			//// Enable detailed errors and sensitive data logging in development environment for better debugging.
+			//if (builder.Environment.IsDevelopment())
+			//{
+			//	options.EnableDetailedErrors();
+			//	options.EnableSensitiveDataLogging();
+			//}
+
+			//options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
+			options.UseExceptionProcessor();
 			options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 		});
 
@@ -64,7 +76,7 @@ public class Program
 			// for the Operation Results of our Business Logic methods.
 
 			// Rif: https://github.com/marcominerva/OperationResults/blob/master/samples/OperationResults.Sample.BusinessLayer/CustomFailureReasons.cs#L3
-			//options.StatusCodesMapping.Add(CustomFailureReasons.NotAvailable, StatusCodes.Status501NotImplemented);
+			options.StatusCodesMapping.Add(CustomFailureReasons.NotAvailable, StatusCodes.Status501NotImplemented);
 
 			// If you just want to directly use HTTP status codes as failure reasons, set the following property to false.
 			// In this way, the code you use with Result.Fail() will be used as response status code with no further mapping.
@@ -115,11 +127,6 @@ public class Program
 						var redisSettings = builder.Services.ConfigureAndGet<RedisSettings>(builder.Configuration, nameof(RedisSettings)) ?? new();
 						builder.Services.AddStackExchangeRedisCache(options =>
 						{
-							// For a basic Redis configuration
-							//options.Configuration = redisSettings.EndPoints;
-							//options.InstanceName = redisSettings.InstanceName;
-
-							// For a more advanced Redis configuration
 							options.InstanceName = $"{redisSettings.InstanceName}:";
 							options.ConfigurationOptions = new ConfigurationOptions
 							{
