@@ -1,4 +1,6 @@
-﻿namespace MinimalApi.Template.Api.Endpoints;
+﻿using MinimalApi.Template.BusinessLayer.Context;
+
+namespace MinimalApi.Template.Api.Endpoints;
 
 public class TestEndpoints : IEndpointRouteHandlerBuilder
 {
@@ -45,7 +47,6 @@ public class TestEndpoints : IEndpointRouteHandlerBuilder
 				logger.LogInformation("Cache miss for 'datetime'. Fetching new datetime value");
 				await Task.Delay(1000, cancellationToken);
 
-				//return GetCacheTaskValue(timeZoneService, timeZoneInfo).ToString();
 				return GetCacheTaskValue(timeZoneInfo).ToString();
 			}, cacheOptions, cancellationToken);
 
@@ -64,12 +65,47 @@ public class TestEndpoints : IEndpointRouteHandlerBuilder
 		.WithName("GetDateTime")
 		.WithDescription("Gets the current date and time.")
 		.WithSummary("Retrieves the current date and time, utilizing caching for efficiency.");
+
+		testGroup.MapGet("/datetime-nocache", async Task<Result<DateTimeResponse>> (TestEndpointContext<TestEndpoints> ctx, CancellationToken cancellationToken) =>
+		{
+			var timeZoneInfo = ctx.TimeZoneService.GetTimeZone();
+
+			if (timeZoneInfo is null)
+			{
+				var timeZoneId = ctx.TimeZoneService.GetTimeZoneHeaderValue();
+
+				if (timeZoneId is not null)
+				{
+					// If timeZoneInfo is null, but timeZoneId has a value, it means that the time zone specified in the header is invalid.
+					return Result.Fail(FailureReasons.ClientError, "Unable to find the time zone", $"The time zone '{timeZoneId}' is invalid or is not available on the system");
+				}
+			}
+
+			ctx.Logger.LogInformation("Cache miss for 'datetime'. Fetching new datetime value");
+			await Task.Delay(1000, cancellationToken);
+
+			var noCacheTask = GetCacheTaskValue(timeZoneInfo).ToString();
+
+			if (noCacheTask is null)
+			{
+				ctx.Logger.LogError("Failed to retrieve 'datetime' from cache.");
+				return Result.Fail(FailureReasons.Forbidden);
+			}
+
+			var response = new DateTimeResponse(noCacheTask.ToString());
+
+			return response;
+		})
+		.Produces<DateTimeResponse>(StatusCodes.Status200OK)
+		.ProducesProblem(StatusCodes.Status403Forbidden)
+		.WithName("GetDateTime-NoCache")
+		.WithDescription("Gets the current date and time.")
+		.WithSummary("Retrieves the current date and time, utilizing caching for efficiency.");
 	}
 
 	private record class HelloResponse(string Message);
 	private record class DateTimeResponse(string DateTime);
 
-	//private static DateTime GetCacheTaskValue(ITimeZoneService timeZoneService, TimeZoneInfo? timeZoneInfo)
 	private static DateTime GetCacheTaskValue(TimeZoneInfo? timeZoneInfo)
 	{
 		var dateTime = DateTime.Now;
