@@ -24,7 +24,7 @@
                 ".template.config/**/*",
                 ".artifacts/**",
                 ".github/FUNDING.yml",
-                ".github/workflows/publish.yml",
+                //".github/workflows/publish.yml",
                 ".vs/**"
             ],
             "modifiers": [
