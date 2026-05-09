@@ -1,3 +1,6 @@
+using ErrorResponseFormat = AppEngine.Validations.Validation.ErrorResponseFormat;
+using ErrorResposeFormatOR = AppEngine.Tools.OperationResults.AspNetCore.Http.ErrorResponseFormat;
+
 namespace MinimalApi.Template.Api;
 
 public class Program
@@ -69,7 +72,7 @@ public class Program
 
 		builder.Services.AddOperationResult(options =>
 		{
-			options.ErrorResponseFormat = ErrorResponseFormat.List;
+			options.ErrorResponseFormat = ErrorResposeFormatOR.List;
 
 			// Adds a custom mapping between CustomFailureReasons.NotAvailable (1001) and the 501 HTTP Status Code.
 			// Adding new mappings or editing the existing ones allows to define what HTTP Status Codes the API must return
