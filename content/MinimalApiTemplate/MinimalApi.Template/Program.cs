@@ -1,6 +1,3 @@
-using ErrorResponseFormat = AppEngine.Validations.Validation.ErrorResponseFormat;
-using ErrorResposeFormatOR = AppEngine.Tools.OperationResults.AspNetCore.Http.ErrorResponseFormat;
-
 namespace MinimalApi.Template.Api;
 
 public class Program
@@ -17,17 +14,50 @@ public class Program
 		});
 
 		var appSettings = builder.Services.ConfigureAndGet<AppSettings>(builder.Configuration, nameof(AppSettings)) ?? new();
-		var swaggerSettings = builder.Services.ConfigureAndGet<SwaggerSettings>(builder.Configuration, nameof(SwaggerSettings)) ?? new();
+		var toolDocumentation = appSettings.ApiDocumentationTool;
+
+		var swaggerSettings = new SwaggerSettings();
+		var scalarSettings = new ScalarSettings();
+
+		if (toolDocumentation == ApiDocumentationTool.SwaggerUI)
+		{
+			swaggerSettings = builder.Services.ConfigureAndGet<SwaggerSettings>(builder.Configuration, nameof(SwaggerSettings)) ?? new();
+		}
+		else if (toolDocumentation == ApiDocumentationTool.Scalar)
+		{
+			scalarSettings = new ScalarSettings()
+			{
+				Title = $"{builder.Environment.ApplicationName} API Reference",
+
+				// Optional, default is true
+				//DarkMode = true,
+
+				// Optional, default is true
+				//ShowSidebar = true,
+
+				// Optional, default is Never.
+				//ShowDeveloperToolsVisibility = DeveloperToolsVisibility.Never,
+
+				// Optional, default is Mars
+				Theme = ScalarTheme.BluePlanet,
+
+				// Optional, default is CSharp
+				//Target = ScalarTarget.CSharp,
+
+				// Optional, default is HttpClient
+				//Client = ScalarClient.HttpClient
+			};
+		}
 
 		builder.Services.AddHttpContextAccessor();
 		builder.Services.AddScoped<TestEndpointContext<TestEndpoints>>();
 
 		builder.Services.AddSingleton<ILogEventEnricher, HttpContextEnricher>();
-
 		builder.Services.AddSingleton(TimeProvider.System);
-		builder.Services.AddSingleton<ClientTimeProvider>();
 
+		builder.Services.AddSingleton<ClientTimeProvider>();
 		builder.Services.AddSingleton<ITimeZoneService, TimeZoneService>();
+
 		builder.Services.AddDbContext<ApplicationDbContext>(options =>
 		{
 			var connectionString = builder.Configuration.GetConnectionString("SqlConnection")!;
@@ -58,14 +88,6 @@ public class Program
 			options.LogTo(Console.WriteLine, LogLevel.Information);
 			options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
 
-			//// Enable detailed errors and sensitive data logging in development environment for better debugging.
-			//if (builder.Environment.IsDevelopment())
-			//{
-			//	options.EnableDetailedErrors();
-			//	options.EnableSensitiveDataLogging();
-			//}
-
-			//options.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
 			options.UseExceptionProcessor();
 			options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 		});
@@ -115,41 +137,6 @@ public class Program
 			//options.ValidationErrorTitleMessageFactory = (context, errors) => $"There was {errors.Values.Sum(v => v.Length)} validation error(s) occurred";
 		});
 
-		if (appSettings.CachingEnabled)
-		{
-			var CacheType = builder.Configuration.GetSection("CacheSettings").GetValue<string>("CacheType");
-
-			switch (CacheType)
-			{
-				case nameof(CachingType.Memory):
-					builder.Services.AddMemoryCache();
-					builder.Services.AddDistributedMemoryCache();
-					break;
-				default:
-					{
-						var redisSettings = builder.Services.ConfigureAndGet<RedisSettings>(builder.Configuration, nameof(RedisSettings)) ?? new();
-						builder.Services.AddStackExchangeRedisCache(options =>
-						{
-							options.InstanceName = $"{redisSettings.InstanceName}:";
-							options.ConfigurationOptions = new ConfigurationOptions
-							{
-								EndPoints = { redisSettings.EndPoints },
-								Password = redisSettings.Password,
-								ClientName = redisSettings.ClientName,
-								KeepAlive = redisSettings.KeepAlive,
-								Ssl = redisSettings.SslforAzure,
-								AbortOnConnectFail = redisSettings.AbortOnConnectFail
-							};
-						});
-						break;
-					}
-			}
-		}
-		else
-		{
-			// Logging will be done after the app is built to avoid calling BuildServiceProvider early
-		}
-
 		builder.Services.AddOpenApiOperationParameters(options =>
 		{
 			options.Parameters.Add(new()
@@ -176,55 +163,27 @@ public class Program
 			//    });
 		});
 
-		if (swaggerSettings.IsEnabled)
-		{
-			builder.Services.AddOpenApi(options =>
-			{
-				// Remove Servers list in OpenAPI.
-				options.RemoveServerList();
+		var apiOptionSettings = new OpenApiOptionSettings();
+		var apiPolicyOptions = new List<ApiPoliciesSettings>();
 
-				// Enable OpenAPI integration for simple authentication.
-				//options.AddSimpleAuthentication(builder.Configuration, "JwtSettings");
-
-				// Add Accept-Language header to all endpoints.
-				options.AddAcceptLanguageHeader();
-
-				// Add a default (error) response to all endpoints.
-				options.AddDefaultProblemDetailsResponse();
-
-				// Enable OpenAPI integration for custom parameters.
-				options.AddOperationParameters();
-
-				// Respect the ignored JsonNumberHandling attribute.
-				//options.WriteNumberAsString(); 
-
-				// Describe all query string parameters in Camel Case.
-				//options.DescribeAllParametersInCamelCase();
-
-				// Add time examples for TimeSpan and TimeOnly fields.
-				//options.AddTimeExamples(); 
-			});
-		}
-
+		builder.Services.AddVersioningApi(appSettings.ApiVersions, builder.Configuration, apiOptionSettings, apiPolicyOptions);
 		builder.Services.AddDefaultProblemDetails();
-		builder.Services.AddDefaultExceptionHandler();
 
+		builder.Services.AddDefaultExceptionHandler();
 		builder.Services.AddCors(options =>
 		{
 			options.AddDefaultPolicy(builder =>
 			{
-				builder.AllowAnyHeader().AllowAnyMethod().SetIsOriginAllowed(_ => true)
+				builder.AllowAnyHeader()
+					//.AllowAnyMethod()
+					// TODO: Restrict the allowed origins in production.
+					.WithMethods("GET", "POST", "PUT", "DELETE")
+					.SetIsOriginAllowed(_ => true)
 					.AllowCredentials().WithExposedHeaders(HeaderNames.ContentDisposition);
 			});
 		});
 
 		var app = builder.Build();
-
-		if (!appSettings.CachingEnabled)
-		{
-			var logger = app.Services.GetRequiredService<ILogger<Program>>();
-			logger.LogInformation("Caching is disabled. To enable caching, set CachingEnabled to true in the appsettings.json file.");
-		}
 
 		//await ConfigureDatabaseAsync(app.Services);
 		app.UseForwardedHeaders(new()
@@ -236,21 +195,20 @@ public class Program
 		app.UseHttpsRedirection();
 		app.UseExceptionHandler();
 
-		app.UseStatusCodePages();
-		if (swaggerSettings.IsEnabled)
-		{
-			if (swaggerSettings.RequireAuthentication)
-			{
-				app.UseMiddleware<SwaggerBasicAuthenticationMiddleware>();
-			}
+		app.MapOpenApi()
+			// Allow anonymous access to the OpenAPI document for tools like Swagger UI.
+			//.AllowAnonymous()
 
-			//app.MapOpenApi().AllowAnonymous(); // Allow anonymous access to the OpenAPI document for tools like Swagger UI.
-			app.MapOpenApi();
-			app.UseSwaggerUI(options =>
-			{
-				options.SwaggerEndpoint("/openapi/v1.json", $"{app.Environment.ApplicationName} v1");
-			});
-		}
+			// Generate a separate OpenAPI document for each API version.
+			// The version is determined by the ApiVersion attribute on the controllers or by the default version defined in the API versioning configuration.
+			// The Asp.Versioning.OpenApi Nuget package is currently in Release Candidate (RC 1)
+			.WithDocumentPerVersion();
+
+		// Map the OpenAPI document to the selected API documentation tool (Swagger UI or Scalar) based on the configuration in appsettings.json.
+		AppEngine.Tools.DependencyInjection.ServiceCollectionExtensions.MapDocumentationTool(appSettings, toolDocumentation, swaggerSettings, scalarSettings, app);
+
+		// Enable serving default files like index.html from wwwroot folder
+		//app.UseDefaultFiles();
 
 		//app.UseDefaultFiles(); // Enable serving default files like index.html from wwwroot folder
 		//app.UseStaticFiles(); // Enable serving static files from wwwroot folder
@@ -269,12 +227,9 @@ public class Program
 		//app.UseAuthorization();
 		app.UseResponseCompression();
 
-		if (appSettings.CachingEnabled)
-		{
-			app.UseResponseCaching();
-		}
-
+		app.UseResponseCaching();
 		//app.MapEndpointsFromAssemblyContaining<Program>(); // Automatically map endpoints from all controllers in the assembly.
+
 		app.MapEndpoints(); // Automatically map endpoints from all controllers in the assembly.
 		app.Run();
 
