@@ -1,6 +1,4 @@
-﻿using MinimalApi.Template.BusinessLayer.Context;
-
-namespace MinimalApi.Template.Api.Endpoints;
+﻿namespace MinimalApi.Template.Api.Endpoints;
 
 public class TestEndpoints : IEndpointRouteHandlerBuilder
 {
