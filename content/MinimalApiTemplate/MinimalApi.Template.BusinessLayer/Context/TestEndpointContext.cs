@@ -1,9 +1,4 @@
-﻿using AppEngine.Routing;
-using AppEngine.Tools.TimeZoneService.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-
-namespace MinimalApi.Template.BusinessLayer.Context;
+﻿namespace MinimalApi.Template.BusinessLayer.Context;
 
 public class TestEndpointContext<TEndpoints>(ILogger<TEndpoints> logger, ITimeZoneService timeZoneService, IHttpContextAccessor accessor)
 	where TEndpoints : IEndpointRouteHandlerBuilder
