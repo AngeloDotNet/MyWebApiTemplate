@@ -1,6 +1,4 @@
-﻿using AppEngine.Tools.OperationResults;
-
-namespace MinimalApi.Template.BusinessLayer;
+﻿namespace MinimalApi.Template.BusinessLayer;
 
 public static class CustomFailureReasons
 {
