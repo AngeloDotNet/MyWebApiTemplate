@@ -4,8 +4,16 @@ public class TestEndpoints : IEndpointRouteHandlerBuilder
 {
 	public static void MapEndpoints(IEndpointRouteBuilder endpoints)
 	{
-		var testGroup = endpoints
-			.MapGroup("/test")
+		var versionedApi = endpoints.NewVersionedApi().ReportApiVersions();
+		var versionNeutralApi = versionedApi.MapGroup("test2").IsApiVersionNeutral();
+
+		//var testGroup = endpoints
+		//	.MapGroup("/test")
+		//	.WithTags("Test Endpoints");
+
+		//var testGroup = versionedApi
+		var testGroup = versionNeutralApi
+			.MapGroup("test")
 			.WithTags("Test Endpoints");
 
 		testGroup.MapGet("/hello", Result<HelloResponse> (HttpContext httpContext) =>
