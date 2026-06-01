@@ -7,7 +7,7 @@
       "launchBrowser": true,
       // This will open the browser to the /scalar endpoint when the application starts.
       // If you're using Swagger, you can comment out the line below or change this value to "swagger" to open the Swagger UI directly.
-      "launchUrl": "scalar",
+      //"launchUrl": "scalar",
       "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"

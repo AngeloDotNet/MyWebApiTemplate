@@ -185,7 +185,7 @@ public class Program
 
 		var app = builder.Build();
 
-		//await ConfigureDatabaseAsync(app.Services);
+		await ConfigureDatabaseAsync(app.Services);
 		app.UseForwardedHeaders(new()
 		{
 			ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
@@ -205,7 +205,20 @@ public class Program
 			.WithDocumentPerVersion();
 
 		// Map the OpenAPI document to the selected API documentation tool (Swagger UI or Scalar) based on the configuration in appsettings.json.
-		AppEngine.Tools.DependencyInjection.ServiceCollectionExtensions.MapDocumentationTool(appSettings, toolDocumentation, swaggerSettings, scalarSettings, app);
+		//AppEngine.Tools.DependencyInjection.ServiceCollectionExtensions.MapDocumentationTool(appSettings, toolDocumentation, swaggerSettings, scalarSettings, app);
+		//ServiceCollectionExtensionAET.MapDocumentationTool(appSettings, toolDocumentation, swaggerSettings, scalarSettings, app);
+		app.UseSwaggerUI(options =>
+		{
+			var descriptions = app.DescribeApiVersions();
+
+			foreach (var description in descriptions)
+			{
+				//options.SwaggerEndpoint($"/openapi/{description.GroupName}.json", description.GroupName);
+				options.SwaggerEndpoint($"/openapi/{description.GroupName}.json", $"{app.Environment.ApplicationName} {description.GroupName}");
+			}
+
+			options.RoutePrefix = string.Empty; // Serve the Swagger UI at the app's root (e.g., https://localhost:5001/)
+		});
 
 		// Enable serving default files like index.html from wwwroot folder
 		//app.UseDefaultFiles();
@@ -233,12 +246,12 @@ public class Program
 		app.MapEndpoints(); // Automatically map endpoints from all controllers in the assembly.
 		app.Run();
 
-		//static async Task ConfigureDatabaseAsync(IServiceProvider serviceProvider)
-		//{
-		//    await using var scope = serviceProvider.CreateAsyncScope();
-		//    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+		static async Task ConfigureDatabaseAsync(IServiceProvider serviceProvider)
+		{
+			await using var scope = serviceProvider.CreateAsyncScope();
+			var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-		//    await dbContext.Database.MigrateAsync();
-		//}
+			await dbContext.Database.MigrateAsync();
+		}
 	}
 }
