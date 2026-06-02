@@ -1,3 +1,5 @@
+using EFCoreDJ = AppEngine.EFCore.DependencyInjection.ServiceCollectionExtensions;
+
 namespace MinimalApi.Template.Api;
 
 public class Program
@@ -163,8 +165,14 @@ public class Program
 			//    });
 		});
 
-		var apiOptionSettings = new OpenApiOptionSettings();
 		var apiPolicyOptions = new List<ApiPoliciesSettings>();
+		var apiOptionSettings = new OpenApiOptionSettings()
+		{
+			RemoveServerList = true,
+			AddAcceptLanguageHeader = true,
+			AddDefaultProblemDetailsResponse = true,
+			AddOperationParameters = true
+		};
 
 		builder.Services.AddVersioningApi(appSettings.ApiVersions, builder.Configuration, apiOptionSettings, apiPolicyOptions);
 		builder.Services.AddDefaultProblemDetails();
@@ -184,8 +192,9 @@ public class Program
 		});
 
 		var app = builder.Build();
+		EFCoreDJ.ApplyMigrations<ApplicationDbContext>(app);
 
-		await ConfigureDatabaseAsync(app.Services);
+		//await ConfigureDatabaseAsync(app.Services);
 		app.UseForwardedHeaders(new()
 		{
 			ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
@@ -213,7 +222,6 @@ public class Program
 
 			foreach (var description in descriptions)
 			{
-				//options.SwaggerEndpoint($"/openapi/{description.GroupName}.json", description.GroupName);
 				options.SwaggerEndpoint($"/openapi/{description.GroupName}.json", $"{app.Environment.ApplicationName} {description.GroupName}");
 			}
 
@@ -246,12 +254,12 @@ public class Program
 		app.MapEndpoints(); // Automatically map endpoints from all controllers in the assembly.
 		app.Run();
 
-		static async Task ConfigureDatabaseAsync(IServiceProvider serviceProvider)
-		{
-			await using var scope = serviceProvider.CreateAsyncScope();
-			var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+		//static async Task ConfigureDatabaseAsync(IServiceProvider serviceProvider)
+		//{
+		//	await using var scope = serviceProvider.CreateAsyncScope();
+		//	var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
-			await dbContext.Database.MigrateAsync();
-		}
+		//	await dbContext.Database.MigrateAsync();
+		//}
 	}
 }
