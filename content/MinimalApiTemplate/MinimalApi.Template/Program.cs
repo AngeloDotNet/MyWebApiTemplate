@@ -183,8 +183,6 @@ public class Program
 			options.AddDefaultPolicy(builder =>
 			{
 				builder.AllowAnyHeader()
-					//.AllowAnyMethod()
-					// TODO: Restrict the allowed origins in production.
 					.WithMethods("GET", "POST", "PUT", "DELETE")
 					.SetIsOriginAllowed(_ => true)
 					.AllowCredentials().WithExposedHeaders(HeaderNames.ContentDisposition);
@@ -194,7 +192,6 @@ public class Program
 		var app = builder.Build();
 		EFCoreDJ.ApplyMigrations<ApplicationDbContext>(app);
 
-		//await ConfigureDatabaseAsync(app.Services);
 		app.UseForwardedHeaders(new()
 		{
 			ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
@@ -253,13 +250,5 @@ public class Program
 
 		app.MapEndpoints(); // Automatically map endpoints from all controllers in the assembly.
 		app.Run();
-
-		//static async Task ConfigureDatabaseAsync(IServiceProvider serviceProvider)
-		//{
-		//	await using var scope = serviceProvider.CreateAsyncScope();
-		//	var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-		//	await dbContext.Database.MigrateAsync();
-		//}
 	}
 }
