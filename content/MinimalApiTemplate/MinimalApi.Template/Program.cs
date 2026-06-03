@@ -1,5 +1,3 @@
-using EFCoreDJ = AppEngine.EFCore.DependencyInjection.ServiceCollectionExtensions;
-
 namespace MinimalApi.Template.Api;
 
 public class Program
@@ -16,6 +14,8 @@ public class Program
 		});
 
 		var appSettings = builder.Services.ConfigureAndGet<AppSettings>(builder.Configuration, nameof(AppSettings)) ?? new();
+		var sqlServerConfiguration = builder.Configuration.GetConnectionString("SqlConnection")!;
+
 		var toolDocumentation = appSettings.ApiDocumentationTool;
 
 		var swaggerSettings = new SwaggerSettings();
@@ -62,8 +62,7 @@ public class Program
 
 		builder.Services.AddDbContext<ApplicationDbContext>(options =>
 		{
-			var connectionString = builder.Configuration.GetConnectionString("SqlConnection")!;
-			options.UseSqlServer(connectionString, opt =>
+			options.UseSqlServer(sqlServerConfiguration, opt =>
 			{
 				opt.CommandTimeout(60); // Set the command timeout to 60 seconds.
 				opt.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
@@ -74,10 +73,17 @@ public class Program
 				// Set the compatibility level to the highest supported by your SQL Server version.
 				// Docs: https://learn.microsoft.com/it-it/sql/t-sql/statements/alter-database-transact-sql-compatibility-level?view=sql-server-ver17
 
-				//opt.UseCompatibilityLevel(140); // SQL Server 2017
-				//opt.UseCompatibilityLevel(150); // SQL Server 2019
-				//opt.UseCompatibilityLevel(160); // SQL Server 2022
-				opt.UseCompatibilityLevel(170); // SQL Server 2025
+				// SQL Server 2017
+				//opt.UseCompatibilityLevel(140); 
+
+				// SQL Server 2019
+				//opt.UseCompatibilityLevel(150); 
+
+				// SQL Server 2022
+				opt.UseCompatibilityLevel(160);
+
+				// SQL Server 2025
+				//opt.UseCompatibilityLevel(170); 
 			});
 
 			// Enable detailed errors and sensitive data logging in development environment for better debugging.
@@ -168,9 +174,7 @@ public class Program
 		var apiPolicyOptions = new List<ApiPoliciesSettings>();
 		var apiOptionSettings = new OpenApiOptionSettings()
 		{
-			RemoveServerList = true,
 			AddAcceptLanguageHeader = true,
-			AddDefaultProblemDetailsResponse = true,
 			AddOperationParameters = true
 		};
 
@@ -190,7 +194,7 @@ public class Program
 		});
 
 		var app = builder.Build();
-		EFCoreDJ.ApplyMigrations<ApplicationDbContext>(app);
+		//EFCoreDJ.ApplyMigrations<ApplicationDbContext>(app);
 
 		app.UseForwardedHeaders(new()
 		{
@@ -211,19 +215,7 @@ public class Program
 			.WithDocumentPerVersion();
 
 		// Map the OpenAPI document to the selected API documentation tool (Swagger UI or Scalar) based on the configuration in appsettings.json.
-		//AppEngine.Tools.DependencyInjection.ServiceCollectionExtensions.MapDocumentationTool(appSettings, toolDocumentation, swaggerSettings, scalarSettings, app);
-		//ServiceCollectionExtensionAET.MapDocumentationTool(appSettings, toolDocumentation, swaggerSettings, scalarSettings, app);
-		app.UseSwaggerUI(options =>
-		{
-			var descriptions = app.DescribeApiVersions();
-
-			foreach (var description in descriptions)
-			{
-				options.SwaggerEndpoint($"/openapi/{description.GroupName}.json", $"{app.Environment.ApplicationName} {description.GroupName}");
-			}
-
-			options.RoutePrefix = string.Empty; // Serve the Swagger UI at the app's root (e.g., https://localhost:5001/)
-		});
+		ServiceCollectionExtensions.MapDocumentationTool(appSettings, toolDocumentation, swaggerSettings, scalarSettings, app);
 
 		// Enable serving default files like index.html from wwwroot folder
 		//app.UseDefaultFiles();

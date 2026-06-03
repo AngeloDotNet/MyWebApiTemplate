@@ -32,3 +32,4 @@ global using System.Text;
 global using System.Text.Json;
 global using ErrorResponseFormat = AppEngine.Validations.Validation.ErrorResponseFormat;
 global using ErrorResposeFormatOR = AppEngine.Tools.OperationResults.AspNetCore.Http.ErrorResponseFormat;
+global using ServiceCollectionExtensions = AppEngine.Tools.DependencyInjection.ServiceCollectionExtensions;
