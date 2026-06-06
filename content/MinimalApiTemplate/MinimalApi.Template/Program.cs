@@ -27,27 +27,33 @@ public class Program
 		}
 		else if (toolDocumentation == ApiDocumentationTool.Scalar)
 		{
+			//scalarSettings = new ScalarSettings()
+			//{
+			//	Title = $"{builder.Environment.ApplicationName} API Reference",
+
+			//	// Optional, default is true
+			//	//DarkMode = true,
+
+			//	// Optional, default is true
+			//	//ShowSidebar = true,
+
+			//	// Optional, default is Never.
+			//	//ShowDeveloperToolsVisibility = DeveloperToolsVisibility.Never,
+
+			//	// Optional, default is Mars
+			//	Theme = ScalarTheme.BluePlanet,
+
+			//	// Optional, default is CSharp
+			//	//Target = ScalarTarget.CSharp,
+
+			//	// Optional, default is HttpClient
+			//	//Client = ScalarClient.HttpClient
+			//};
+
 			scalarSettings = new ScalarSettings()
 			{
 				Title = $"{builder.Environment.ApplicationName} API Reference",
-
-				// Optional, default is true
-				//DarkMode = true,
-
-				// Optional, default is true
-				//ShowSidebar = true,
-
-				// Optional, default is Never.
-				//ShowDeveloperToolsVisibility = DeveloperToolsVisibility.Never,
-
-				// Optional, default is Mars
 				Theme = ScalarTheme.BluePlanet,
-
-				// Optional, default is CSharp
-				//Target = ScalarTarget.CSharp,
-
-				// Optional, default is HttpClient
-				//Client = ScalarClient.HttpClient
 			};
 		}
 
@@ -100,6 +106,7 @@ public class Program
 			options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 		});
 
+		//builder.Services.AddPersistenceUoW<ENTITY, int, ApplicationDbContext>();
 		builder.Services.AddOperationResult(options =>
 		{
 			options.ErrorResponseFormat = ErrorResposeFormatOR.List;
