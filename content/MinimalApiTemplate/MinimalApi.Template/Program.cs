@@ -162,7 +162,7 @@ public class Program
 			AddOperationParameters = true
 		};
 
-		builder.Services.AddVersioningApi(appSettings.ApiVersions, builder.Configuration, apiOptionSettings, apiPolicyOptions);
+		builder.Services.AddVersioningApi(appSettings.ApiVersions, builder.Configuration, apiOptionSettings, apiPolicyOptions, null!);
 		builder.Services.AddDefaultProblemDetails();
 
 		builder.Services.AddDefaultExceptionHandler();
