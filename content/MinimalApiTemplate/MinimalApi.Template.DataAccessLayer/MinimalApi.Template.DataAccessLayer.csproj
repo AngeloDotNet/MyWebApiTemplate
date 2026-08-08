@@ -11,7 +11,7 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
 		<PackageReference Include="TinyAppEngine" Version="1.0.54" />
 		<PackageReference Include="TinyAppEngine.EFCore" Version="1.0.13" />
-		<PackageReference Include="TinyAppEngine.Tools" Version="1.0.116" />
+		<PackageReference Include="TinyAppEngine.Tools" Version="1.0.118" />
 		<PackageReference Include="TinyAppEngine.Validations" Version="1.0.10" />
 	</ItemGroup>
 
