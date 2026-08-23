@@ -9,10 +9,10 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
-		<PackageReference Include="TinyAppEngine" Version="1.0.56" />
+		<PackageReference Include="TinyAppEngine" Version="1.0.57" />
 		<PackageReference Include="TinyAppEngine.EFCore" Version="1.0.23" />
-		<PackageReference Include="TinyAppEngine.Tools" Version="1.0.120" />
-		<PackageReference Include="TinyAppEngine.Validations" Version="1.0.10" />
+		<PackageReference Include="TinyAppEngine.Tools" Version="1.0.125" />
+		<PackageReference Include="TinyAppEngine.Validations" Version="1.0.12" />
 	</ItemGroup>
 
 </Project>
